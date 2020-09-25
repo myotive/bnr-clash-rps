@@ -1,0 +1,75 @@
+/* accounts / session styling */
+#logout {
+  display: none;
+}
+
+#google-signin {
+  margin-top: 20px;
+}
+
+#google-signin img {
+  cursor: pointer;
+}
+
+#google-signin strong {
+  display: block;
+  margin-bottom: 20px;
+}
+
+/* chat styling */
+#chat textarea {
+  width: 100%;
+  resize: none;
+}
+
+#chat-messages ul {
+  list-style: none;
+  padding-left: 10px;
+}
+
+#chat-messages {
+  overflow-y: auto;
+}
+
+#send-chat {
+  float: right;
+}
+
+/* game list styling */
+#games ul {
+  list-style: none;
+  padding-left: 10px;
+}
+
+/* camera dialog */
+#game-cam {
+  width: 680px;
+}
+
+#cam {
+  background: darkgray;
+  width: 640px;
+  height: 480px;
+  margin: 0 auto;
+}
+
+#cam-progress {
+  width: 644px;
+  display: none;
+}
+
+/* game results display */
+#game .image-wrapper {
+  padding: 10px;
+}
+
+#game .face {
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
+}
+
+#game .emotion {
+  height: 60px;
+  text-align: center;
+}

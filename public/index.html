@@ -1,0 +1,232 @@
+<!doctype html>
+<!--
+    Copyright 2016 Google Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>HAPPY 😃 ANGRY 😠 SURPRISED 😨</title>
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-light_blue.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-2.0.3.js"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/ui.js"></script>
+    <script defer src="js/forms.js"></script>
+    <script defer src="js/session.js"></script>
+    <script defer src="js/chat.js"></script>
+    <script defer src="js/cam.js"></script>
+    <script defer src="js/vision.js"></script>
+    <script defer src="js/game.js"></script>
+    <script defer src="js/script.js"></script>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">HAPPY 😃 ANGRY 😠 SURPRISED 😨</span>
+            <div class="mdl-layout-spacer"></div>
+            <button id="help" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                <i class="material-icons">help</i>
+            </button>
+            <button id="logout"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Logout
+            </button>
+            <button id="login"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Login
+            </button>
+            <dialog id="login-dialog" class="mdl-dialog">
+                <h4 class="mdl-dialog__title">Login</h4>
+                <div class="mdl-dialog__content">
+                    <form action="#">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="email">
+                            <label class="mdl-textfield__label" for="email">Email</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="password" id="password">
+                            <label class="mdl-textfield__label" for="password">Password</label>
+                        </div>
+                        <button id="sign-in"
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            Login
+                        </button>
+                        <button id="create-account"
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div id="google-signin">
+                        <strong>OR</strong>
+                        <img src="images/btn_google_signin_dark_pressed_web.png" />
+                    </div>
+                </div>
+            </dialog>
+            <dialog id="create-account-dialog" class="mdl-dialog">
+                <h4 class="mdl-dialog__title">Create Account</h4>
+                <div class="mdl-dialog__content">
+                    <form action="#">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="entry-displayname">
+                            <label class="mdl-textfield__label" for="entry-email">Display Name</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="entry-email">
+                            <label class="mdl-textfield__label" for="entry-email">Email</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="password" id="entry-password">
+                            <label class="mdl-textfield__label" for="entry-password">Password</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button id="entry-submit"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Create
+                    </button>
+                </div>
+            </dialog>
+            <dialog id="help-dialog" class="mdl-dialog">
+                <h5 class="mdl-dialog__title">Help</h5>
+                <div class="mdl-dialog__content">
+                    <p>
+                        This is the same game as Rock, Paper Scissors, except played with Happy, Angry and Surprised
+                        facial emotions.
+                    </p>
+                    <p>
+                        The rules are as follows:
+                    </p>
+                    <ul>
+                        <li><strong>Happy</strong> beats <strong>Angry</strong></li>
+                        <li><strong>Surprised</strong> beats <strong>Happy</strong></li>
+                        <li><strong>Angry</strong> beats <strong>Surprised</strong></li>
+                    </ul>
+                </div>
+            </dialog>
+        </div>
+    </header>
+    <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid">
+            <div id="game" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--6-col">
+                <div class="image-wrapper">
+                    <img id="my-image" class="face"/>
+                    <div id="my-image-emotion" class="emotion"><h3></h3></div>
+                    <img id="other-image" class="face"/>
+                    <div id="other-image-emotion" class="emotion"><h3></h3></div>
+                </div>
+                <dialog id="game-cam" class="mdl-dialog">
+                    <h3 class="mdl-dialog__title">Are you ready?</h3>
+                    <div class="mdl-dialog__content">
+                        <video id="cam" autoplay></video>
+                        <div id="cam-progress" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+                    </div>
+                </dialog>
+            </div>
+            <div id="games" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--3-col mdl-card">
+                <div id="games-header" class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Open Games</h2>
+                </div>
+                <div class="mdl-card__actions mdl-card--border" style="text-align: right;">
+                    <button id="create-game" disabled
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Create Game
+                    </button>
+                </div>
+                <div id="games-list" class="mdl-card__actions mdl-card--border">
+                    <ul></ul>
+                </div>
+            </div>
+            <div id="chat" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--3-col mdl-card">
+                <div id="chat-header" class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Group Chat</h2>
+                </div>
+                <div id="chat-messages" class="mdl-card__actions mdl-card--border">
+                    <ul>
+                    </ul>
+                </div>
+                <div id="chat-input" class="mdl-card__actions mdl-card--border">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <textarea disabled class="mdl-textfield__input" rows="2" id="chat-message"></textarea>
+                        <label class="mdl-textfield__label" for="chat-message">Chat message...</label>
+                    </div>
+                    <button disabled id="send-chat"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<dialog id="result" class="mdl-dialog">
+    <h2 class="mdl-dialog__title"></h2>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button">Play Again?</button>
+    </div>
+</dialog>
+<div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loadEl = document.querySelector('#load');
+      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+      // // The Firebase SDK is initialized and available here!
+      //
+      // firebase.auth().onAuthStateChanged(user => { });
+      // firebase.  ().ref('/path/to/ref').on('value', snapshot => { });
+      // firebase.messaging().requestPermission().then(() => { });
+      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+      // firebase.analytics(); // call to activate
+      // firebase.analytics().logEvent('tutorial_completed');
+      // firebase.performance(); // call to activate
+      //
+      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+      try {
+        let app = firebase.app();
+        let features = [
+          'auth', 
+          'database', 
+          'messaging', 
+          'storage', 
+          'analytics', 
+          'remoteConfig',
+          'performance',
+        ].filter(feature => typeof app[feature] === 'function');
+        //loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+      } catch (e) {
+        console.error(e);
+        loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+      }
+    });
+  </script>
+
+</html>
