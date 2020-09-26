@@ -18,9 +18,9 @@ var GestureRecognition = (function () {
   };
 
   const gestureStrings = {
-    rock: '🗿',
+    rock: '🤘',
     paper: '🧻',
-    scissors: '✂️'
+    scissors: '💈'
   };
 
   function drawPoint(ctx, x, y, r, color) {
