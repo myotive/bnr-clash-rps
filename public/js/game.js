@@ -19,18 +19,18 @@
 /**
  * Module that controls all the gameplay logic and UI of Happy, Angry, Surprised.
  */
-var Game = (function() {
+var Game = (function () {
 
     var ref;
     //set of states a game can be in.
-    var STATE = {OPEN: 1, JOINED: 2, TAKE_PICTURE: 3, UPLOADED_PICTURE: 4, FACE_DETECTED: 5, COMPLETE: 6};
-    var EMOTIONS = {
-        HAPPY: {label: "Happy", visionKey: "joyLikelihood"},
-        SURPRISED: {label: "Surprised", visionKey: "surpriseLikelihood"},
-        ANGRY: {label: "Angry", visionKey: "angerLikelihood"}
+    var STATE = { OPEN: 1, JOINED: 2, TAKE_PICTURE: 3, UPLOADED_PICTURE: 4, HAND_DETECTED: 5, COMPLETE: 6 };
+    var WEAPONS = {
+        ROCK: { label: "Rock", visionKey: "rockLikelihood", likelihood: 0.0 },
+        PAPER: { label: "Paper", visionKey: "paperLikelihood", likelihood: 0.0 },
+        SCISSORS: { label: "Scissors", visionKey: "scissorsLikelihood", likelihood: 0.0 }
     };
-    var EMOTION_SCALE = ["UNLIKELY", "VERY_LIKELY", "LIKELY", "POSSIBLE"];
-    var UNKNOWN_EMOTION = {label: "Unknown", likelihood: "???"};
+    var WEAPON_SCALE = ["UNLIKELY", "VERY_LIKELY", "LIKELY", "POSSIBLE"];
+    var UNKNOWN_WEAPON = { label: "Unknown", likelihood: "???" };
 
     //ui elements
     var create;
@@ -53,9 +53,9 @@ var Game = (function() {
         var item = document.createElement("li");
         item.id = key;
         item.innerHTML = '<button id="create-game" ' +
-                'class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">' +
-                'Join ' + game.creator.displayName + '</button>';
-        item.addEventListener("click", function() {
+            'class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">' +
+            'Join ' + game.creator.displayName + '</button>';
+        item.addEventListener("click", function () {
             joinGame(key);
         });
 
@@ -79,10 +79,10 @@ var Game = (function() {
         };
 
         var key = ref.push();
-        key.set(currentGame, function(error) {
+        key.set(currentGame, function (error) {
             if (error) {
                 console.log("Uh oh, error creating game.", error);
-                UI.snackbar({message: "Error creating game"});
+                UI.snackbar({ message: "Error creating game" });
             } else {
                 //disable access to joining other games
                 console.log("I created a game!", key);
@@ -100,7 +100,7 @@ var Game = (function() {
     function joinGame(key) {
         console.log("Attempting to join game: ", key);
         var user = firebase.auth().currentUser;
-        ref.child(key).transaction(function(game) {
+        ref.child(key).transaction(function (game) {
             //only join if someone else hasn't
             if (!game.joiner) {
                 game.state = STATE.JOINED;
@@ -110,17 +110,17 @@ var Game = (function() {
                 }
             }
             return game;
-        }, function(error, committed, snapshot) {
+        }, function (error, committed, snapshot) {
             if (committed) {
                 if (snapshot.val().joiner.uid == user.uid) {
                     enableCreateGame(false);
                     watchGame(key);
                 } else {
-                    UI.snackbar({message: "Game already joined. Please choose another."});
+                    UI.snackbar({ message: "Game already joined. Please choose another." });
                 }
             } else {
                 console.log("Could not commit when trying to join game", error);
-                UI.snackbar({message: "Error joining game"});
+                UI.snackbar({ message: "Error joining game" });
             }
         });
     }
@@ -131,10 +131,10 @@ var Game = (function() {
      * */
     function joinedGame(game, gameRef) {
         if (game.creator.uid == firebase.auth().currentUser.uid) {
-            UI.snackbar({message: game.joiner.displayName + " has joined your game."});
+            UI.snackbar({ message: game.joiner.displayName + " has joined your game." });
             //wait a little bit
-            window.setTimeout(function() {
-                gameRef.update({state: STATE.TAKE_PICTURE});
+            window.setTimeout(function () {
+                gameRef.update({ state: STATE.TAKE_PICTURE });
             }, 1000);
         }
     }
@@ -144,7 +144,7 @@ var Game = (function() {
      * and updates the game state to UPLOADED_PICTURE
      * */
     function addImageToGame(gameRef, game, gcsPath, downloadURL) {
-        var data = {state: STATE.UPLOADED_PICTURE};
+        var data = { state: STATE.UPLOADED_PICTURE };
 
         if (game.creator.uid == firebase.auth().currentUser.uid) {
             data["creator/gcsPath"] = gcsPath;
@@ -164,15 +164,15 @@ var Game = (function() {
     function saveImage(imageRef, blob, successCallback) {
         var uploadTask = imageRef.put(blob);
         uploadTask.on("state_changed",
-                function(snapshot) {
-                },
-                function(error) {
-                    console.log("Error uploading image:", error);
-                    UI.snackbar("Error uploading photo.");
-                }, function() {
-                    console.log("Image has been uploaded!", uploadTask.snapshot);
-                    successCallback(uploadTask);
-                });
+            function (snapshot) {
+            },
+            function (error) {
+                console.log("Error uploading image:", error);
+                UI.snackbar("Error uploading photo.");
+            }, function () {
+                console.log("Image has been uploaded!", uploadTask.snapshot);
+                successCallback(uploadTask);
+            });
     }
 
     /*
@@ -189,8 +189,8 @@ var Game = (function() {
         var imageRef = firebase.storage().ref().child("games/" + gameRef.key + "/" + firebase.auth().currentUser.uid + ".png");
 
         // convert the canvas to a png blob
-        canvas.toBlob(function(blob) {
-            saveImage(imageRef, blob, function(uploadTask) {
+        canvas.toBlob(function (blob) {
+            saveImage(imageRef, blob, function (uploadTask) {
                 dialog.close();
                 //no reason to re-download this from GCS. Just set it locally.
                 document.querySelector("#my-image").setAttribute("src", canvas.toDataURL("image/png"));
@@ -208,7 +208,7 @@ var Game = (function() {
     function countDownToTakingPicture(gameRef, game) {
         var title = dialog.querySelector(".mdl-dialog__title");
         dialog.showModal();
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             title.innerText = 5;
 
             //for debugging purposes
@@ -217,7 +217,7 @@ var Game = (function() {
             }
 
             //title.innerText = Math.floor(Math.random() * (10 - 3)) + 3;
-            var f = function() {
+            var f = function () {
                 var count = parseInt(title.innerText);
                 if (count > 1) {
                     count--;
@@ -251,42 +251,11 @@ var Game = (function() {
     }
 
     /*
-     * Get a single emotion value out of Vision API results
-     * Either, Happy, Surprised, Angry or Unknown.
-     *
-     * */
-    function getVisionEmotion(visionResult) {
-        if (!visionResult.responses || visionResult.responses.length != 1 || visionResult.responses[0].error) {
-            console.log("Error in vision result:", visionResult);
-            UI.snackbar({message: "Error getting Vision API Result"});
-            return
-        }
-
-        if (visionResult.responses[0].faceAnnotations.length != 1) {
-            UI.snackbar({message: "No face in image"});
-            return
-        }
-
-        var faceData = visionResult.responses[0].faceAnnotations[0];
-        console.log("Face Data: ", faceData);
-        for (var likelihood of EMOTION_SCALE) {
-            for (var key in EMOTIONS) {
-                var emotion = EMOTIONS[key];
-                if (faceData[emotion.visionKey] == likelihood) {
-                    return {label: emotion.label, likelihood: likelihood};
-                }
-            }
-        }
-
-        return UNKNOWN_EMOTION
-    }
-
-    /*
     * Add the current player's emotion data to the current game
     * and save it in Firebase.
     * */
-    function addEmotionToGame(gameRef, game, emotion) {
-        var data = {state: STATE.FACE_DETECTED};
+    function addWeaponToGame(gameRef, game, emotion) {
+        var data = { state: STATE.HAND_DETECTED };
 
         if (game.creator.uid == firebase.auth().currentUser.uid) {
             data["creator/emotion"] = emotion;
@@ -297,30 +266,20 @@ var Game = (function() {
         gameRef.update(data);
     }
 
-    /*
-     * Once the game has the stored image from the webcam picture
-     * Run this to detect what emotion is being shown on the face
-     * in the picture, and add it to the game.
-     * */
-    function detectMyFacialEmotion(gameRef, game) {
-        var gcsPath = game.creator.gcsPath;
-        if (game.joiner.uid == firebase.auth().currentUser.uid) {
-            gcsPath = game.joiner.gcsPath;
-        }
 
-        //may not be my path, so quit out early, as I may not have a value.
-        if (!gcsPath) {
-            return
-        }
+    function getWeaponFromLabel(weapon) {
 
-        // TODO: do detection here
-        // Vision.detectFace(gcsPath, function(result) {
-        //     var emotion = getVisionEmotion(result);
+        var result = UNKNOWN_WEAPON;
+        result.likelihood = weapon.confidence;
 
-        //     console.log("Emotion Found: ", emotion);
-        //     document.querySelector("#my-image-emotion h3").innerText = emotion.label + " (" + emotion.likelihood + ")";
-        //     addEmotionToGame(gameRef, game, emotion)
-        // });
+        if (weapon.name == WEAPONS.ROCK.label.toLowerCase())
+            result = WEAPONS.ROCK;
+        else if (weapon.name == WEAPONS.PAPER.label.toLowerCase())
+            result = WEAPONS.PAPER;
+        else if (weapon.name == WEAPONS.SCISSORS.label.toLowerCase())
+            result = WEAPONS.SCISSORS;
+
+        return result;
     }
 
     /*
@@ -351,29 +310,29 @@ var Game = (function() {
         if (game.creator.uid != firebase.auth().currentUser.uid) {
             return
         }
-        //make sure we have both emotions.
+        //make sure we have both weapons.
         if (!(game.creator.emotion && game.joiner.emotion)) {
             return
         }
 
-        console.log("We both have emotions!");
+        console.log("We both have weapons!");
         var creatorWins = false;
         var joinerWins = false;
 
-        if (game.creator.emotion.label == EMOTIONS.HAPPY.label &&
-                game.joiner.emotion.label == EMOTIONS.ANGRY.label) {
+        if (game.creator.emotion.label == WEAPONS.ROCK.label &&
+            game.joiner.emotion.label == WEAPONS.PAPER.label) {
             creatorWins = true;
-        } else if (game.creator.emotion.label == EMOTIONS.SURPRISED.label &&
-                game.joiner.emotion.label == EMOTIONS.HAPPY.label) {
+        } else if (game.creator.emotion.label == WEAPONS.PAPER.label &&
+            game.joiner.emotion.label == WEAPONS.ROCK.label) {
             creatorWins = true;
-        } else if (game.creator.emotion.label == EMOTIONS.ANGRY.label &&
-                game.joiner.emotion.label == EMOTIONS.SURPRISED.label) {
+        } else if (game.creator.emotion.label == WEAPONS.SCISSORS.label &&
+            game.joiner.emotion.label == WEAPONS.PAPER.label) {
             creatorWins = true;
         } else if (game.creator.emotion.label == game.joiner.emotion.label) {
             //do nothing, its a draw
-        } else if (game.creator.emotion.label == UNKNOWN_EMOTION.label) {
+        } else if (game.creator.emotion.label == UNKNOWN_WEAPON.label) {
             joinerWins = true;
-        } else if (game.joiner.emotion.label == UNKNOWN_EMOTION.label) {
+        } else if (game.joiner.emotion.label == UNKNOWN_WEAPON.label) {
             creatorWins = true;
         } else {
             joinerWins = true;
@@ -424,13 +383,13 @@ var Game = (function() {
      * */
     function watchGame(key) {
         var gameRef = ref.child(key);
-        gameRef.on("value", function(snapshot) {
+        gameRef.on("value", function (snapshot) {
             var game = snapshot.val();
             console.log("Game update:", game);
 
             //if we get a null value, because remove - ignore it.
             if (!game) {
-                UI.snackbar({message: "Game has finished. Please play again."});
+                UI.snackbar({ message: "Game has finished. Please play again." });
                 enableCreateGame(true);
                 return
             }
@@ -441,14 +400,19 @@ var Game = (function() {
                     break;
                 case STATE.TAKE_PICTURE:
                     countDownToTakingPicture(gameRef, game);
+                    // todo: Add hand detetion logic here
+                    var callbackFunction = function (weaponLabel) {
+                        var weapon = getWeaponFromLabel(weaponLabel);
+                        addWeaponToGame(gameRef, game, weapon)
+                    };
+                    GestureRecognition.setGestureCallback(callbackFunction);
                     break;
                 case STATE.UPLOADED_PICTURE:
                     displayUploadedPicture(game);
-                    detectMyFacialEmotion(gameRef, game);
-                    break;
-                case STATE.FACE_DETECTED:
-                    displayDetectedEmotion(game);
                     determineWinner(gameRef, game);
+                     break;
+                 case STATE.HAND_DETECTED:
+                    displayDetectedEmotion(game);
                     break;
                 case STATE.COMPLETE:
                     showWinner(game);
@@ -463,7 +427,7 @@ var Game = (function() {
          * Firebase event handlers for when open games are created,
          * and also handing when they are removed.
          * */
-        init: function() {
+        init: function () {
             create = document.querySelector("#create-game");
             create.addEventListener("click", createGame);
 
@@ -474,7 +438,7 @@ var Game = (function() {
             ref = firebase.database().ref("/games");
 
             var openGames = ref.orderByChild("state").equalTo(STATE.OPEN);
-            openGames.on("child_added", function(snapshot) {
+            openGames.on("child_added", function (snapshot) {
                 var data = snapshot.val();
                 console.log("Game Added:", data);
 
@@ -484,7 +448,7 @@ var Game = (function() {
                 }
             });
 
-            openGames.on("child_removed", function(snapshot) {
+            openGames.on("child_removed", function (snapshot) {
                 var item = document.querySelector("#" + snapshot.key);
                 if (item) {
                     item.remove();
@@ -495,9 +459,9 @@ var Game = (function() {
         /*
          * Enable creation of open games once the player has logged in.
          * */
-        onlogin: function() {
+        onlogin: function () {
             enableCreateGame(true);
         }
     };
 })
-();
+    ();

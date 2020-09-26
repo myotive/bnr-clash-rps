@@ -20,7 +20,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>HAPPY 😃 ANGRY 😠 SURPRISED 😨</title>
+    <title>POCK 🗻 Saper 🧻 Rcissors ✂ </title>
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.cyan-light_blue.min.css">
     <link rel="stylesheet" href="styles.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-2.0.3.js"></script>
@@ -39,13 +41,19 @@
     <script defer src="js/cam.js"></script>
     <script defer src="js/vision.js"></script>
     <script defer src="js/game.js"></script>
+    <script src="js/fingerpose.js"></script>
+    <script src="js/gesturerecognition.js"></script>
     <script defer src="js/script.js"></script>
+
 </head>
 <body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+
+        <div id="info-text" ></div>
+
         <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">HAPPY 😃 ANGRY 😠 SURPRISED 😨</span>
+            <span class="mdl-layout-title">ROCK 🗿 PAPER 🧻 SCISSORS ✂️</span>
             <div class="mdl-layout-spacer"></div>
             <button id="help" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                 <i class="material-icons">help</i>
@@ -115,16 +123,15 @@
                 <h5 class="mdl-dialog__title">Help</h5>
                 <div class="mdl-dialog__content">
                     <p>
-                        This is the same game as Rock, Paper Scissors, except played with Happy, Angry and Surprised
-                        facial emotions.
+                        Rock, Paper, Scissors
                     </p>
                     <p>
                         The rules are as follows:
                     </p>
                     <ul>
-                        <li><strong>Happy</strong> beats <strong>Angry</strong></li>
-                        <li><strong>Surprised</strong> beats <strong>Happy</strong></li>
-                        <li><strong>Angry</strong> beats <strong>Surprised</strong></li>
+                        <li><strong>Rock</strong> beats <strong>Scissors</strong></li>
+                        <li><strong>Paper</strong> beats <strong>Rock</strong></li>
+                        <li><strong>Scissors</strong> beats <strong>Paper</strong></li>
                     </ul>
                 </div>
             </dialog>
@@ -143,6 +150,8 @@
                     <h3 class="mdl-dialog__title">Are you ready?</h3>
                     <div class="mdl-dialog__content">
                         <video id="cam" autoplay></video>
+                        <canvas id= "canvas" width="640" height="480" style="border:1px solid"></canvas>
+                        <div id="pose-result" class="layer"></div>
                         <div id="cam-progress" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
                     </div>
                 </dialog>
@@ -194,6 +203,7 @@
     <button class="mdl-snackbar__action" type="button"></button>
 </div>
 </body>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
       const loadEl = document.querySelector('#load');

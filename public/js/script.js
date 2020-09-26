@@ -34,6 +34,7 @@ window.onload = function() {
     Chat.init();
     Cam.init();
     Game.init();
+    GestureRecognition.init();
 };
 
 // Manage layout on resize
