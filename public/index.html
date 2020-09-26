@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="styles.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-2.0.3.js"></script>
@@ -165,6 +165,11 @@
                             class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                         Create Game
                     </button>
+
+                    <button id="preview-button"
+                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Preview Camera
+                    </button>
                 </div>
                 <div id="games-list" class="mdl-card__actions mdl-card--border">
                     <ul></ul>
@@ -196,6 +201,13 @@
     <h2 class="mdl-dialog__title"></h2>
     <div class="mdl-dialog__actions">
         <button type="button" class="mdl-button">Play Again?</button>
+    </div>
+</dialog>
+<dialog id="preview-dialog" class="mdl-dialog">
+    <h5 class="mdl-dialog__title">preview</h5>
+    <div class="mdl-dialog__content">
+        <div class="detected-gesture"></div>
+        <video id="preview" autoplay></video>
     </div>
 </dialog>
 <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">

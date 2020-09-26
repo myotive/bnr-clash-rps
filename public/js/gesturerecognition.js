@@ -30,19 +30,20 @@ var GestureRecognition = (function () {
     ctx.fill();
   }
 
-  var gestureCallback = function(weapon) {
+  var gestureCallback = function (weapon) {
     console.log(weapon);
   };
 
   return {
-    setGestureCallback: function(callback) {
+    setGestureCallback: function (callback) {
       gestureCallback = callback;
     },
     init: async function () {
 
       const video = document.querySelector("#cam")
       const infoText = document.querySelector('#info-text');
-      const resultLayer = document.querySelector ('#pose-result');
+      const detectedGesture = document.querySelector(".detected-gesture");
+      const resultLayer = document.querySelector('#pose-result');
 
       const rockGesture = new fp.GestureDescription('rock');
       rockGesture.addCurl(fp.Finger.Thumb, fp.FingerCurl.FullCurl, 1.0);
@@ -80,10 +81,10 @@ var GestureRecognition = (function () {
       paperGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0);
       paperGesture.addCurl(fp.Finger.Middle, fp.FingerCurl.NoCurl, 1.0);
       paperGesture.addCurl(fp.Finger.Ring, fp.FingerCurl.NoCurl, 1.0);
-      paperGesture.addCurl(fp.Finger.Pinky, fp.FingerCurl.NoCurl,  1.0);
+      paperGesture.addCurl(fp.Finger.Pinky, fp.FingerCurl.NoCurl, 1.0);
 
       const scissorsGesture = new fp.GestureDescription('scissors');
-      scissorsGesture.addCurl(fp.Finger.Thumb, fp.FingerCurl.FullCurl,  1.0);
+      scissorsGesture.addCurl(fp.Finger.Thumb, fp.FingerCurl.FullCurl, 1.0);
       scissorsGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0);
       scissorsGesture.addCurl(fp.Finger.Middle, fp.FingerCurl.NoCurl, 1.0);
       scissorsGesture.addCurl(fp.Finger.Ring, fp.FingerCurl.FullCurl, 1.0);
@@ -99,7 +100,7 @@ var GestureRecognition = (function () {
       scissorsGesture.addDirection(fp.Finger.Middle, fp.FingerDirection.DiagonalDownLeft, 0.5);
       scissorsGesture.addDirection(fp.Finger.Middle, fp.FingerDirection.DiagonalDownRight, 0.5);
 
-      const knownGestures = [ rockGesture, paperGesture, scissorsGesture];
+      const knownGestures = [rockGesture, paperGesture, scissorsGesture];
       const GE = new fp.GestureEstimator(knownGestures);
 
       const model = await handpose.load();
@@ -108,8 +109,8 @@ var GestureRecognition = (function () {
         'Handpose model loaded successfully, starting predictions ✔';
 
       const estimateHands = async () => {
-        var canvas = document.getElementById ('canvas');
-        var ctx = canvas.getContext ('2d');
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, config.video.width, config.video.height);
         resultLayer.innerText = '⭕';
         infoText.innerText = `Loaded model -> Prediction ⭕`;
@@ -147,6 +148,7 @@ var GestureRecognition = (function () {
 
             resultLayer.innerText = gestureStrings[result.name];
             infoText.innerText = `Prediction: ${gestureStrings[result.name]}`;
+            detectedGesture.innerText = `${gestureStrings[result.name]}`;
           }
         }
 
@@ -155,8 +157,14 @@ var GestureRecognition = (function () {
         }, 10000 / config.video.fps);
       };
 
-      estimateHands();
-      console.log('Starting predictions');
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      getUserMedia.call(navigator, {
+        video: true,
+        audio: false //optional
+      }, function (stream) {
+        estimateHands();
+        console.log('Starting predictions');
+      });
     },
   }
 })();

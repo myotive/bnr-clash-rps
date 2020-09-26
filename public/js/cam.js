@@ -23,6 +23,7 @@
 var Cam = (function() {
     var cam;
 
+    var preview;
     // Exported functions
     return {
 
@@ -33,26 +34,22 @@ var Cam = (function() {
         init: function() {
             cam = document.querySelector("#cam");
 
+            preview = document.querySelector("#preview");
+
             console.log("Attempting to connect webcam...");
-            // var constraints = {audio: false, video: true};
-            // navigator.mediaDevices.getUserMedia(constraints)
-            //         .then(function(stream) {
-            //             console.log("Connected successfully to video stream");
-            //             cam.srcObject = stream;
-            //         })
-            //         .catch(function(error) {
-            //             console.log("Could not connect to camera: ", error);
-            //             UI.snackbar({message: "Error connecting to camera"});
-            //         });
+            
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             getUserMedia.call(navigator, {
                 video: true,
                 audio: false //optional
             }, function (stream) {
-                
+
                 cam.srcObject = stream;
-            
                 cam.play();
+
+                preview.srcObject = stream;
+                preview.play();
+
             });
         }
     }

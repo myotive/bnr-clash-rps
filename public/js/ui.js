@@ -65,6 +65,10 @@ var UI = (function() {
                 document.querySelector('#help-dialog').showModal();
             });
 
+            document.querySelector("#preview-button").addEventListener("click", function() {
+                document.querySelector('#preview-dialog').showModal();
+            });
+
             // play again dialog
             var result = document.querySelector("#result");
             result.querySelector("button").addEventListener("click", function() {
