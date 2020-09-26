@@ -50,6 +50,7 @@ var Cam = (function() {
                 preview.srcObject = stream;
                 preview.play();
 
+                GestureRecognition.startEvaluating();
             });
         }
     }

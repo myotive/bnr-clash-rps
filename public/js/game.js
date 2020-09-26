@@ -399,13 +399,13 @@ var Game = (function () {
                     joinedGame(game, gameRef);
                     break;
                 case STATE.TAKE_PICTURE:
-                    countDownToTakingPicture(gameRef, game);
                     // todo: Add hand detetion logic here
                     var callbackFunction = function (weaponLabel) {
                         var weapon = getWeaponFromLabel(weaponLabel);
                         addWeaponToGame(gameRef, game, weapon)
                     };
                     GestureRecognition.setGestureCallback(callbackFunction);
+                    countDownToTakingPicture(gameRef, game);
                     break;
                 case STATE.UPLOADED_PICTURE:
                     displayUploadedPicture(game);

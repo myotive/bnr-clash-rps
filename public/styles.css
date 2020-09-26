@@ -100,3 +100,10 @@
 #preview-dialog {
   width:688px;
 }
+
+.detected-gesture {
+  font-size: 68pt;
+  position: absolute;
+  margin-left: 65%;
+  margin-top: 10%;
+}
